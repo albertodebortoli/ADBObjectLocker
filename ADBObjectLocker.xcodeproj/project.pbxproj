@@ -12,10 +12,11 @@
 		D3562AA117AB1729000642A0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3562AA017AB1729000642A0 /* CoreGraphics.framework */; };
 		D3562AA717AB1729000642A0 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D3562AA517AB1729000642A0 /* InfoPlist.strings */; };
 		D3562AA917AB1729000642A0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D3562AA817AB1729000642A0 /* main.m */; };
-		D3562AAD17AB1729000642A0 /* ADBAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D3562AAC17AB1729000642A0 /* ADBAppDelegate.m */; };
 		D3562AAF17AB1729000642A0 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = D3562AAE17AB1729000642A0 /* Default.png */; };
 		D3562AB117AB1729000642A0 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D3562AB017AB1729000642A0 /* Default@2x.png */; };
 		D3562AB317AB1729000642A0 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D3562AB217AB1729000642A0 /* Default-568h@2x.png */; };
+		D3562ABB17AB1947000642A0 /* ADBObjectLocker.m in Sources */ = {isa = PBXBuildFile; fileRef = D3562ABA17AB1947000642A0 /* ADBObjectLocker.m */; };
+		D3562ABE17AB1A7E000642A0 /* ADBObject.m in Sources */ = {isa = PBXBuildFile; fileRef = D3562ABD17AB1A7E000642A0 /* ADBObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,11 +28,13 @@
 		D3562AA617AB1729000642A0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		D3562AA817AB1729000642A0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		D3562AAA17AB1729000642A0 /* ADBObjectLocker-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ADBObjectLocker-Prefix.pch"; sourceTree = "<group>"; };
-		D3562AAB17AB1729000642A0 /* ADBAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ADBAppDelegate.h; sourceTree = "<group>"; };
-		D3562AAC17AB1729000642A0 /* ADBAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ADBAppDelegate.m; sourceTree = "<group>"; };
 		D3562AAE17AB1729000642A0 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		D3562AB017AB1729000642A0 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		D3562AB217AB1729000642A0 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		D3562AB917AB1947000642A0 /* ADBObjectLocker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBObjectLocker.h; sourceTree = "<group>"; };
+		D3562ABA17AB1947000642A0 /* ADBObjectLocker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBObjectLocker.m; sourceTree = "<group>"; };
+		D3562ABC17AB1A7E000642A0 /* ADBObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ADBObject.h; sourceTree = "<group>"; };
+		D3562ABD17AB1A7E000642A0 /* ADBObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ADBObject.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,8 +81,10 @@
 		D3562AA217AB1729000642A0 /* ADBObjectLocker */ = {
 			isa = PBXGroup;
 			children = (
-				D3562AAB17AB1729000642A0 /* ADBAppDelegate.h */,
-				D3562AAC17AB1729000642A0 /* ADBAppDelegate.m */,
+				D3562AB917AB1947000642A0 /* ADBObjectLocker.h */,
+				D3562ABA17AB1947000642A0 /* ADBObjectLocker.m */,
+				D3562ABC17AB1A7E000642A0 /* ADBObject.h */,
+				D3562ABD17AB1A7E000642A0 /* ADBObject.m */,
 				D3562AA317AB1729000642A0 /* Supporting Files */,
 			);
 			path = ADBObjectLocker;
@@ -166,7 +171,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3562AA917AB1729000642A0 /* main.m in Sources */,
-				D3562AAD17AB1729000642A0 /* ADBAppDelegate.m in Sources */,
+				D3562ABB17AB1947000642A0 /* ADBObjectLocker.m in Sources */,
+				D3562ABE17AB1A7E000642A0 /* ADBObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +287,7 @@
 				D3562AB817AB1729000642A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
