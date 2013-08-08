@@ -10,15 +10,12 @@
 
 #import <objc/runtime.h>
 #import <objc/message.h>
-#import <objc/objc-class.h>
 
 @interface NSObject (Locker)
 
-@property (nonatomic, strong) NSMutableDictionary *lockedMethods;
+@property (nonatomic, strong, readonly) NSMutableDictionary *lockedMethods;
 
 @end
-
-NSString const *kLockedMethods = @"lockedMethods";
 
 @implementation NSObject (Locker)
 
@@ -26,20 +23,18 @@ NSString const *kLockedMethods = @"lockedMethods";
 
 - (NSMutableDictionary *)lockedMethods
 {
-    return objc_getAssociatedObject(self, (__bridge const void *)(kLockedMethods));
-}
-
-- (void)setLockedMethods:(NSMutableDictionary *)lockedMethods
-{
-    [self willChangeValueForKey:@"lockedMethods"];
-    objc_setAssociatedObject(self, (__bridge const void *)(kLockedMethods), lockedMethods, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    [self didChangeValueForKey:@"lockedMethods"];
+    if(objc_getAssociatedObject(self, _cmd) == nil) {
+        objc_setAssociatedObject(self, _cmd, [NSMutableDictionary dictionary], OBJC_ASSOCIATION_ASSIGN);
+    }
+    
+    return objc_getAssociatedObject(self, _cmd);
 }
 
 @end
 
 @implementation ADBObjectLocker
 
+//TODO: Make this work with class methods
 + (void)lockMethodSelector:(SEL)methodSelector forObject:(id)obj
 {
     // get the strings for the selectors
@@ -49,11 +44,6 @@ NSString const *kLockedMethods = @"lockedMethods";
     // get the selectors
     SEL origSelector = methodSelector;
     SEL swizzledSelector = NSSelectorFromString(swizzledMethodSelectorString);
-
-    // create an empty dictionary if missing
-    if ([(NSObject *)obj lockedMethods] == nil) {
-        [obj setLockedMethods:[NSMutableDictionary dictionary]];
-    }
     
     // add the method to lock to the list of the object
     [[(NSObject *)obj lockedMethods] setObject:@YES forKey:origMethodSelectorString];
@@ -64,30 +54,36 @@ NSString const *kLockedMethods = @"lockedMethods";
         return;
     }
     
+    Method orig = class_getInstanceMethod([obj class], origSelector);
+    
     // create a custom implementation to use for the to be swizzled method
-    void (^implementingBlock)(id s, SEL _c, id o) = ^(id s, SEL _c, id o) {
-        if ([[(NSObject *)s lockedMethods] objectForKey:origMethodSelectorString]) {
-            NSLog(@"*** This method (%@) has been locked for the object %@. Not executing.", origMethodSelectorString, s);
-            return;
+    void (^implementingBlock)(id receiver, ...) = ^(id receiver, ...) {
+        if ([[(NSObject *)receiver lockedMethods] objectForKey:origMethodSelectorString]) {
+            NSLog(@"*** This method (%@) has been locked for the object %@. Not executing.", origMethodSelectorString, receiver);
+        } else {
+
+            //Build an invocation to call the original method
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[receiver methodSignatureForSelector:swizzledSelector]];
+            
+            //Fetch the arguments and add them to the invocation (the +/- 2 is for the hidden '_cmd' & 'self')
+            va_list list;
+            va_start(list, receiver);
+            uint numberOfParameters = method_getNumberOfArguments(orig);
+            for (int i = 0; i < numberOfParameters - 2; i++) {
+                [invocation setArgument:&list[i] atIndex:i + 2];
+            }
+            
+            [invocation setSelector:swizzledSelector];
+            [invocation invokeWithTarget:receiver];
         }
-        
-        // can't use va_list here, it seems impossible to handle arbitrary number of arguments
-        // worse, passed o parameter is wrong.
-        objc_msgSend(s, swizzledSelector, o);
     };
-
-    // create association
-    objc_setAssociatedObject(obj, (__bridge const void *)(swizzledMethodSelectorString), [implementingBlock copy], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-
+    
     // set implementation
     IMP newImp = imp_implementationWithBlock(implementingBlock);
-    class_addMethod([obj class], swizzledSelector, newImp, [swizzledMethodSelectorString UTF8String]);
-    Method swizzledMethod = class_getInstanceMethod([obj class], swizzledSelector);
-    method_setImplementation(swizzledMethod, newImp);
-
-    // swizzle the implementations
-    Method orig = class_getInstanceMethod([obj class], origSelector);
+    class_addMethod([obj class], swizzledSelector, newImp, method_getTypeEncoding(orig));
     Method new = class_getInstanceMethod([obj class], swizzledSelector);
+    
+    // swizzle the implementations
     method_exchangeImplementations(orig, new);
 }
 
